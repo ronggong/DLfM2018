@@ -1,22 +1,30 @@
 import csv
 import os
+
 import numpy as np
 import pandas as pd
-from eval_embedding_helper import ground_truth_matrix
-from training_scripts.data_preparation import load_data_embedding_teacher_student
-from src.parameters import config_select
-from training_scripts.models_RNN import model_select
-from training_scripts.models_RNN import model_select_attention
-from keras.models import load_model
-from keras.models import Model
 from keras.layers import Dense
+from keras.models import Model
+from keras.models import load_model
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from sklearn.metrics import average_precision_score
-from training_scripts.attention import Attention
 
 
-def run_eval(path_dataset, path_output, val_test, exp):
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../training_scripts')))
+
+from eval_embedding_helper import ground_truth_matrix
+from parameters import config_select
+from attention import Attention
+from data_preparation import load_data_embedding_teacher_student
+from models_RNN import model_select
+from models_RNN import model_select_attention
+
+
+def run_eval(path_dataset, path_output, path_model, val_test, exp):
 
     attention = False
     conv = False
@@ -69,7 +77,8 @@ def run_eval(path_dataset, path_output, val_test, exp):
                                 dense=dense,
                                 conv=conv,
                                 dropout=dropout,
-                                path_eval=path_output)
+                                path_eval=path_output,
+                                path_model=path_model)
     else:
         configs = [[1, 0], [1, 1], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1], [3, 2], [3, 3]]
         for config in configs:
@@ -80,7 +89,8 @@ def run_eval(path_dataset, path_output, val_test, exp):
                                     filename_scaler,
                                     config=config,
                                     val_test=val_test,
-                                    path_eval=path_output)
+                                    path_eval=path_output,
+                                    path_model=path_model)
 
 
 def embedding_classifier_ap(filename_feature_teacher,
@@ -94,7 +104,8 @@ def embedding_classifier_ap(filename_feature_teacher,
                             dense=False,
                             conv=False,
                             dropout=False,
-                            path_eval='./eval/phone_embedding_classifier'):
+                            path_eval='./eval/phone_embedding_classifier',
+                            path_model='./models/phone_embedding_classifier'):
     """calculate teacher student pairs average precision of classifier embedding"""
 
     list_feature_flatten_val, label_integer_val, le, scaler = \
@@ -104,7 +115,7 @@ def embedding_classifier_ap(filename_feature_teacher,
                                             filename_list_key_student=filename_list_key_student,
                                             filename_scaler=filename_scaler)
 
-    path_model = './models/phone_embedding_classifier'
+    # path_model = './models/phone_embedding_classifier'
     # path_eval = './eval/phone_embedding_classifier'
 
     prefix = '_2_class_teacher_student'
@@ -252,6 +263,11 @@ if __name__ == '__main__':
                         type=str,
                         help="Type the results output path")
 
+    parser.add_argument("-m",
+                        "--model_path",
+                        type=str,
+                        help="Type the model path")
+
     parser.add_argument("-v",
                         "--valtest",
                         type=str,
@@ -272,4 +288,5 @@ if __name__ == '__main__':
     run_eval(path_dataset=args.dataset_path,
              val_test=args.valtest,
              exp=args.experiment,
-             path_output=args.output_path)
+             path_output=args.output_path,
+             path_model=args.model_path)
