@@ -15,7 +15,8 @@ python ./dataCollection/trainingSampleCollectionPhoneEmbedding.py
 ```
 to extract features for ANOVA feature analysis.
 
-You can also skip this step by directly downloading the extracted features from [zenodo page](https://doi.org/10.5281/zenodo.1287251).
+You can also skip this step by directly downloading the extracted log-mel features `log-mel-scaler-keys-label-encoder.zip`
+from [zenodo page](https://doi.org/10.5281/zenodo.1287251), then unzip it your local `data_path_phone_embedding_model`.
 
 ## Model training
 When the train data is ready, we can run the below script to train pronunciation or overall quality embedding models
@@ -79,10 +80,37 @@ python ./ANOVA_exp/freesound_feature_extraction.py
 to extract acoustic features by using freesound extractor. This step requires Essentia installed. Please
 check this [link](http://essentia.upf.edu/documentation/installing.html) for the Essentia installation detail.
 
-You can also skip the previous steps by directly downloading the acoustic features from [zenodo page](https://doi.org/10.5281/zenodo.1287251).
+You can also skip the previous steps by directly downloading 
+the acoustic features `anova_analysis_essentia_feature.zip` from [zenodo page](https://doi.org/10.5281/zenodo.1287251), then
+unzip it into your local `phn_wav_path`.
 
 Finally, do
 ```bash
 python ./ANOVA_exp/anova_calculation.py
 ```
 to calculate the ANOVA F-value, sort the feature according to its F-value and plot the feature distributions.
+
+## t-SNE overall quality aspect embedding visualization for each phoneme
+Do the step **Phoneme embedding training feature extraction** to extract log-mel features for professional and amateur recordings.
+
+Do
+```bash
+python ./tsne_embedding_extractor.py -d <string: train_data_path> -m <string: embedding_model_path> -o <string: embedding_output_path> --dense <bool>
+```
+to calculate the classification model embeddings for overall quality aspect.
+
+* -d <string: train_data_path>: feature, scaler, feature dictionary keys
+* -m <string: embedding_model_path>: embedding model path
+* -o <string: embedding_output_path>: output calculated embeddings path
+* --dense <bool>: using 32 embedding dimension or not
+
+We provide the calculated embeddings in `./eval/phone_embedding_classifier` path, so you can skip the previous step.
+
+Do
+```bash
+python ./tsne_plot.py -e <string: input_embedding_path> --dense <bool>
+```
+to plot the t-SNE visualization for each phoneme.
+
+* -e <string: input_embedding_path>: embedding path
+* --dense <bool>: using 32 embeddings dimension or not

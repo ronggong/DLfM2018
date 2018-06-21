@@ -172,17 +172,17 @@ def getTeacherStudentRecordings():
 
     # save feature label scaler
     # training and test data on the phone level
-    filename_pho_embedding_train = join(data_path_phone_embedding_model, 'feature_phn_embedding_train_teacher.pkl')
+    filename_pho_embedding_train = join(data_path, 'feature_phn_embedding_train_teacher.pkl')
     pickle.dump(feature_phn_train, open(filename_pho_embedding_train, 'wb'), protocol=2)
 
-    filename_pho_embedding_val = join(data_path_phone_embedding_model, 'feature_phn_embedding_val_teacher.pkl')
+    filename_pho_embedding_val = join(data_path, 'feature_phn_embedding_val_teacher.pkl')
     pickle.dump(feature_phn_val, open(filename_pho_embedding_val, 'wb'), protocol=2)
 
-    filename_pho_embedding_test = join(data_path_phone_embedding_model, 'feature_phn_embedding_test_teacher.pkl')
+    filename_pho_embedding_test = join(data_path, 'feature_phn_embedding_test_teacher.pkl')
     pickle.dump(feature_phn_test, open(filename_pho_embedding_test, 'wb'), protocol=2)
 
     pickle.dump(list_key_teacher,
-                open(join(data_path_phone_embedding_model, 'list_key_teacher.pkl'), 'wb'), protocol=2)
+                open(join(data_path, 'list_key_teacher.pkl'), 'wb'), protocol=2)
 
     # student part
     dic_pho_embedding_train = {}
@@ -210,20 +210,20 @@ def getTeacherStudentRecordings():
 
     # save feature label scaler
     # training and test data on the phone level, no need to save teacher's data
-    filename_pho_embedding_train = join(data_path_phone_embedding_model, 'feature_phn_embedding_train_student.pkl')
+    filename_pho_embedding_train = join(data_path, 'feature_phn_embedding_train_student.pkl')
     pickle.dump(feature_phn_train, open(filename_pho_embedding_train, 'wb'), protocol=2)
 
-    filename_pho_embedding_val = join(data_path_phone_embedding_model, 'feature_phn_embedding_val_student.pkl')
+    filename_pho_embedding_val = join(data_path, 'feature_phn_embedding_val_student.pkl')
     pickle.dump(feature_phn_val, open(filename_pho_embedding_val, 'wb'), protocol=2)
 
-    filename_pho_embedding_test = join(data_path_phone_embedding_model, 'feature_phn_embedding_test_student.pkl')
+    filename_pho_embedding_test = join(data_path, 'feature_phn_embedding_test_student.pkl')
     pickle.dump(feature_phn_test, open(filename_pho_embedding_test, 'wb'), protocol=2)
 
     pickle.dump(scaler,
-                open(join(data_path_phone_embedding_model, 'scaler_phn_embedding_train_teacher_student.pkl'), 'wb'), protocol=2)
+                open(join(data_path, 'scaler_phn_embedding_train_teacher_student.pkl'), 'wb'), protocol=2)
 
     pickle.dump(list_key_student,
-                open(join(data_path_phone_embedding_model, 'list_key_student.pkl'), 'wb'), protocol=2)
+                open(join(data_path, 'list_key_student.pkl'), 'wb'), protocol=2)
 
 
 def getExtraTestRecordings():
@@ -248,11 +248,11 @@ def getExtraTestRecordings():
         feature_phn_test.append(dic_pho_embedding_extra_adult[key])
 
     # save feature
-    filename_pho_embedding_test = join(data_path_phone_embedding_model, 'feature_phn_embedding_test_extra_student.pkl')
+    filename_pho_embedding_test = join(data_path, 'feature_phn_embedding_test_extra_student.pkl')
     pickle.dump(feature_phn_test, open(filename_pho_embedding_test, 'wb'), protocol=2)
 
     pickle.dump(list_key_student,
-                open(join(data_path_phone_embedding_model, 'list_key_extra_student.pkl'), 'wb'), protocol=2)
+                open(join(data_path, 'list_key_extra_student.pkl'), 'wb'), protocol=2)
 
 
 if __name__ == '__main__':

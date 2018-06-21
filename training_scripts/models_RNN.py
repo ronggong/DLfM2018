@@ -478,7 +478,7 @@ def train_embedding_RNN_batch_MTL(list_feature_fold_train,
     if dense:
         x = Dense(units=32)(x)
 
-    profess_out = Dense(output_shape[1], activation='softmax', name='professionality')(x)
+    profess_out = Dense(output_shape[1], activation='softmax', name='overall_quality')(x)
 
     model = Model(inputs=input, outputs=[pronun_out, profess_out])
 

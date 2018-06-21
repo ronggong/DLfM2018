@@ -42,7 +42,7 @@ nacta_dataset_root_path = '/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data
 nacta_wav_path = join(nacta_dataset_root_path, 'wav')
 nacta_textgrid_path = join(nacta_dataset_root_path, 'textgrid')
 
-data_path_phone_embedding_model = '/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/phoneEmbedding'
+data_path = '/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/phoneEmbedding'
 
 # phoneme wav path, for calculate essentia feature
 phn_wav_path = "/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/DLfM_audio_phn"
