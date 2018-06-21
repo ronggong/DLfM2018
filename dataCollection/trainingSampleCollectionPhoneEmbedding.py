@@ -3,12 +3,9 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 import numpy as np
 import pickle
-# import deepdish as dd
 import soundfile as sf
-from src.filepath import phn_wav_path
 from src.filePath import *
 from src.filepathPhoneEmbedding import *
 from src.parameters import *
@@ -29,33 +26,37 @@ def dumpFeaturePho(wav_path,
                    syllableTierName,
                    phonemeTierName):
     """
-    dump the MFCC for each phoneme
-    :param recordings:
+    dump the log-mel feature for each phoneme
+    :param wav_path: path of the wavs
+    :param textgrid_path: path of the textgrid
+    :param recordings: recording file names
+    :param syllableTierName: syllable textgrid tier name - dianSilence
+    :param phonemeTierName: phoneme textgrid tier name - details
     :return:
     """
 
-    ##-- dictionary feature
+    # feature dictionary
     dic_pho_embedding = {}
 
-    for _,pho in enumerate(set(dic_pho_map.values())):
+    for _, pho in enumerate(set(dic_pho_map.values())):
         dic_pho_embedding[pho] = []
 
     for artist_path, recording in recordings:
         nestedPhonemeLists, numSyllables, numPhonemes   \
             = syllableTextgridExtraction(textgrid_path,
-                                         join(artist_path,recording),
+                                         join(artist_path, recording),
                                          syllableTierName,
                                          phonemeTierName)
 
-        # audio
-        wav_full_filename = join(wav_path,artist_path, recording+'.wav')
+        wav_full_filename = join(wav_path, artist_path, recording+'.wav')
 
-        mfcc = getMFCCBandsMadmom(audio_fn=wav_full_filename, fs=fs, hopsize_t=hopsize_t)
+        log_mel = getMFCCBandsMadmom(audio_fn=wav_full_filename, fs=fs, hopsize_t=hopsize_t)
 
+        # go through all the phonemes in the list
         for ii, pho in enumerate(nestedPhonemeLists):
             print('calculating ', recording, ' and phoneme ', str(ii), ' of ', str(len(nestedPhonemeLists)))
             for p in pho[1]:
-                # map from annotated xsampa to readable notation
+                # map from annotated xsampa to a readable notation with a dictionary
                 try:
                     key = dic_pho_map[p[2]]
                 except KeyError:
@@ -66,10 +67,10 @@ def dumpFeaturePho(wav_path,
                 sf = int(round(p[0] * fs / float(hopsize)))  # starting frame
                 ef = int(round(p[1] * fs / float(hopsize)))  # ending frame
 
-                mfcc_p = mfcc[sf:ef, :]  # phoneme syllable
+                log_mel_p = log_mel[sf:ef, :]  # log-mel phoneme
 
-                if len(mfcc_p):
-                    dic_pho_embedding[key].append(mfcc_p)
+                if len(log_mel_p):
+                    dic_pho_embedding[key].append(log_mel_p)
 
     return dic_pho_embedding
 
@@ -80,7 +81,7 @@ def dumpAudioPhn(wav_path,
                  lineTierName,
                  phonemeTierName):
     """
-    dump audio of each phone
+    Dump audio of each phoneme
     :param wav_path:
     :param textgrid_path:
     :param recordings:
@@ -131,8 +132,7 @@ def dumpAudioPhn(wav_path,
 
 def featureAggregator(dic_pho_feature_train):
     """
-    aggregate feature dictionary into numpy feature, label lists,
-    reshape the feature
+    Aggregate feature dictionary into numpy array and label lists, and reshape the feature
     :param dic_pho_feature_train:
     :return:
     """
@@ -154,95 +154,6 @@ def featureAggregator(dic_pho_feature_train):
     scaler = preprocessing.StandardScaler().fit(feature_all)
 
     return feature_all, label_all, scaler
-
-
-def getTeacherRecordingsTrainingData():
-    """get teacher training and test log mel features"""
-
-    from src.train_test_filenames import getTeacherRecordings
-    # import h5py
-
-    trainNacta2017, trainNacta, trainSepa, trainPrimarySchool = getTeacherRecordings()
-
-    dic_pho_embedding_nacta2017 = dumpFeaturePho(wav_path=nacta2017_wav_path,
-                                                 textgrid_path=nacta2017_textgrid_path,
-                                                 recordings=trainNacta2017,
-                                                 syllableTierName='line',
-                                                 phonemeTierName='details')
-
-    dic_pho_embedding_nacta = dumpFeaturePho(wav_path=nacta_wav_path,
-                                             textgrid_path=nacta_textgrid_path,
-                                             recordings=trainNacta,
-                                             syllableTierName='line',
-                                             phonemeTierName='details')
-
-    dic_pho_embedding_primarySchool = dumpFeaturePho(wav_path=primarySchool_wav_path,
-                                                     textgrid_path=primarySchool_textgrid_path,
-                                                     recordings=trainPrimarySchool,
-                                                     syllableTierName='line',
-                                                     phonemeTierName='details')
-
-    dic_pho_embedding_sepa = dumpFeaturePho(wav_path=nacta_wav_path,
-                                            textgrid_path=nacta_textgrid_path,
-                                            recordings=trainSepa,
-                                            syllableTierName='line',
-                                            phonemeTierName='details')
-
-    # fuse two dictionaries
-    list_key = list(set(list(dic_pho_embedding_nacta.keys()) + list(dic_pho_embedding_nacta2017.keys()) +
-                        list(dic_pho_embedding_primarySchool.keys()) + list(dic_pho_embedding_sepa.keys())))
-    print(list_key)
-
-    dic_pho_embedding_all = {}
-    dic_pho_embedding_train = {}
-    dic_pho_embedding_test = {}
-    dic_pho_feature_train = {}
-
-    feature_phn_train = []
-    feature_phn_test = []
-    for key in list_key:
-        dic_pho_embedding_all[key] = dic_pho_embedding_nacta2017[key] + dic_pho_embedding_nacta[key] + \
-                                     dic_pho_embedding_primarySchool[key] + dic_pho_embedding_sepa[key]
-
-        # for l in dic_pho_embedding_all[key]:
-        #     if not len(l):
-        #         print(key, 'empty')
-        #         raise ValueError
-
-        # split 20 percent for test
-        dic_pho_embedding_train[key], dic_pho_embedding_test[key] = \
-            train_test_split(dic_pho_embedding_all[key], test_size=0.2)
-
-        feature_phn_train.append(dic_pho_embedding_train[key])
-        feature_phn_test.append(dic_pho_embedding_test[key])
-        # print(len(dic_pho_embedding_train[key]))
-        dic_pho_feature_train[key] = np.vstack(dic_pho_embedding_train[key])
-
-    feature_train, _, scaler = featureAggregator(dic_pho_feature_train)
-
-    print(feature_train.shape)
-
-    # save feature label scaler
-    # training and test data on the phone level
-    filename_pho_embedding_train = join(data_path_phone_embedding_model, 'feature_phn_embedding_train.pkl')
-    pickle.dump(feature_phn_train, open(filename_pho_embedding_train, 'wb'), protocol=2)
-    # h5f = h5py.File(filename_pho_embedding_train, 'w')
-    # h5f.create_dataset('feature_train', data=feature_phn_train)
-    # h5f.close()
-    # dd.io.save(filename_pho_embedding_train, feature_phn_train)
-
-    filename_pho_embedding_test = join(data_path_phone_embedding_model, 'feature_phn_embedding_test.pkl')
-    pickle.dump(feature_phn_test, open(filename_pho_embedding_test, 'wb'), protocol=2)
-    # h5f = h5py.File(filename_pho_embedding_test, 'w')
-    # h5f.create_dataset('feature_test', data=feature_phn_test)
-    # h5f.close()
-    # dd.io.save(filename_pho_embedding_test, feature_phn_test)
-
-    pickle.dump(scaler,
-                open(join(data_path_phone_embedding_model, 'scaler_phn_embedding.pkl'), 'wb'), protocol=2)
-
-    pickle.dump(list_key,
-                open(join(data_path_phone_embedding_model, 'list_key.pkl'), 'wb'), protocol=2)
 
 
 def getTeacherStudentRecordings():
@@ -314,7 +225,6 @@ def getTeacherStudentRecordings():
         feature_phn_train.append(dic_pho_embedding_train[key])
         feature_phn_val.append(dic_pho_embedding_val[key])
         feature_phn_test.append(dic_pho_embedding_test[key])
-        # print(len(dic_pho_embedding_train[key]))
         dic_pho_feature_train[key] = np.vstack(dic_pho_embedding_train[key])
 
     # save feature label scaler
@@ -472,8 +382,7 @@ def getExtraTestAudio():
 
 
 if __name__ == '__main__':
-
-    # getTeacherStudentRecordings()
-    # getExtraTestRecordings()
-    # getTeacherStudentAudio()
+    getTeacherStudentRecordings()
+    getExtraTestRecordings()
+    getTeacherStudentAudio()
     getExtraTestAudio()

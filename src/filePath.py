@@ -24,37 +24,23 @@
  *
 """
 
-#########################
-# set this dataset path #
-#########################
-
 from os.path import join
 
 
-# dataset_path = '/Users/gong/Documents/MTG document/Jingju arias/jingju_a_cappella_singing_dataset/'
-# dataset_path = '/path/to/your/jingju_a_cappella_singing_dataset/'
-
-
-cnn_file_name = 'gop_model'
-
-# primary dataset
-# primarySchool_dataset_root_path = '/Users/ronggong/Documents_using/MTG document/Jingju arias/primary_school_recording'
+# primary school dataset
 primarySchool_dataset_root_path = '/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/primary_school_recording'
-# primarySchool_dataset_root_path = '/Users/gong/Documents/MTG document/Jingju arias/primary_school_recording'
 primarySchool_wav_path = join(primarySchool_dataset_root_path, 'wav')
 primarySchool_textgrid_path = join(primarySchool_dataset_root_path, 'textgrid')
 
 # nacta 2017 dataset part 2
-# nacta2017_dataset_root_path = '/Users/gong/Documents/MTG document/Jingju arias/jingju_a_cappella_singing_dataset_extended_nacta2017'
 nacta2017_dataset_root_path = '/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/jingju_a_cappella_singing_dataset_extended_nacta2017/'
 nacta2017_wav_path = join(nacta2017_dataset_root_path, 'wav')
 nacta2017_textgrid_path = join(nacta2017_dataset_root_path, 'textgridDetails')
 
 # nacta dataset part 1
-# nacta_dataset_root_path = '/Users/gong/Documents/MTG document/Jingju arias/jingju_a_cappella_singing_dataset'
 nacta_dataset_root_path = '/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/jingju_a_cappella_singing_dataset'
 nacta_wav_path = join(nacta_dataset_root_path, 'wav')
 nacta_textgrid_path = join(nacta_dataset_root_path, 'textgrid')
 
-# acoustic model training dataset path
-data_path_GOP_model = '/Users/gong/Documents/MTG document/dataset/GOPModels'
+# phoneme wav path, for calculate essentia feature
+phn_wav_path = "/media/gong/ec990efa-9ee0-4693-984b-29372dcea0d1/Data/RongGong/DLfM_audio_phn"

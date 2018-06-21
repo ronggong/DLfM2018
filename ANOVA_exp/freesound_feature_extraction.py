@@ -2,7 +2,6 @@ import essentia.standard as es
 import essentia
 import pickle
 import pandas as pd
-# from pathName import *
 import numpy
 import os
 from multiprocessing import Process
@@ -102,7 +101,8 @@ def subprocessFeatureExtractionFrame(path_root,
                                      fn):
     """
     subprocess for essentia freesound feature extractor
-    :param path_audio: input audio path
+    :param path_root: input audio root path
+    :param path_folder: input audio subfolder path
     :param fn: audio file name
     :return:
     """
@@ -123,20 +123,19 @@ def subprocessFeatureExtractionFrame(path_root,
 
 if __name__ == '__main__':
 
-    root_phn_wav_path = "/Volumes/rong_segate/phoneme_audio_dlfm"
-    sub_folders = ['student', 'extra_test']
+    from src.filePath import phn_wav_path
+
+    sub_folders = ['teacher', 'student', 'extra_test']
 
     # old version of essentia processing can't free memory, use subprocess
     for folder in sub_folders:
-        path_phn_wav = os.path.join(root_phn_wav_path, folder)
+        path_phn_wav = os.path.join(phn_wav_path, folder)
 
         filenames_audio = [f for f in os.listdir(path_phn_wav) if os.path.isfile(os.path.join(path_phn_wav, f))]
         for ii, fn in enumerate(filenames_audio):
             # if not os.path.isfile(os.path.join(path_feature_freesound_statistics_channel_string, fn.split('.')[0] + '.csv')):
             print('calculating', ii, fn, 'audio feature for', folder, 'in total', len(filenames_audio))
             p = Process(target=subprocessFeatureExtractionFrame,
-                        args=(root_phn_wav_path,
-                              folder,
-                              fn,))
+                        args=(phn_wav_path, folder, fn,))
             p.start()
             p.join()
