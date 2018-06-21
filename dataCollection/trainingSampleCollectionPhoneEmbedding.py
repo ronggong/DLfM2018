@@ -7,7 +7,6 @@ import numpy as np
 import pickle
 import soundfile as sf
 from src.filePath import *
-from src.filepathPhoneEmbedding import *
 from src.parameters import *
 from src.phonemeMap import dic_pho_map
 from src.phonemeMap import dic_pho_label

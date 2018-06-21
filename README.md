@@ -1,6 +1,23 @@
 # DLfM2018
 Reproducible code for DLfM 2018 paper: An extended jingju solo singing voice dataset and its application on automatic assessment of singing pronunciation and overall quality at phoneme-level
 
+## Phoneme embedding training feature extraction
+Download the datasets, [nacta](https://doi.org/10.5281/zenodo.780559), [nacta_2017](https://doi.org/10.5281/zenodo.842229) and [primary school](https://doi.org/10.5281/zenodo.1244732).
+You should at least download the wav and the annotation in textgrid format. 
+
+Change the root paths in `src.filePath.py` to the your local paths of these 3 datasets.
+
+Change `data_path_phone_embedding_model` in `src.filePath.py` to where you want to store the extracted features.
+
+Change `phn_wav_path` in `src.filePath.py` to where you want to store the phoneme-level wav locally, which will be
+used for the ANOVA feature analysis.
+
+Do:
+```bash
+python ./dataCollection/trainingSampleCollectionPhoneEmbedding.py
+```
+To extract features for phoneme embedding model training and ANOVA feature analysis.
+
 ## Model training
 When the train data is ready, we can run the below script to train pronunciation or overall quality embedding models
 
