@@ -9,14 +9,13 @@ Change the root paths in `src.filePath.py` to the your local paths of these 3 da
 
 Change `data_path_phone_embedding_model` in `src.filePath.py` to where you want to store the extracted features.
 
-Change `phn_wav_path` in `src.filePath.py` to where you want to store the phoneme-level wav locally, which will be
-used for the ANOVA feature analysis.
-
-Do:
+Do
 ```bash
 python ./dataCollection/trainingSampleCollectionPhoneEmbedding.py
 ```
-To extract features for phoneme embedding model training and ANOVA feature analysis.
+to extract features for ANOVA feature analysis.
+
+You can also skip this step by directly downloading the extracted features from [zenodo page](https://doi.org/10.5281/zenodo.1287251).
 
 ## Model training
 When the train data is ready, we can run the below script to train pronunciation or overall quality embedding models
@@ -54,3 +53,36 @@ python ./evaluation/eval_embedding_overall_quality.py -d <string: val_test_data_
 * -e <string: experiment>: 'baseline', 'attention', 'dense', 'cnn', '32_embedding', 'dropout', 'best_combination'
 * -o <string: result_output_path>: where to save the result csv
 * -m <string: model_path>: embedding model path
+
+## ANOVA feature analysis
+The goal of doing ANVOA feature analysis is to find the most discriminant individual feature to separate 
+Professional, amateur train and validation, and amateur test phoneme samples.
+
+Download the datasets, [nacta](https://doi.org/10.5281/zenodo.780559), [nacta_2017](https://doi.org/10.5281/zenodo.842229) and [primary school](https://doi.org/10.5281/zenodo.1244732).
+You should at least download the wav and the annotation in textgrid format. 
+
+Change the root paths in `src.filePath.py` to the your local paths of these 3 datasets.
+
+Change `phn_wav_path` in `src.filePath.py` to where you want to store the phoneme-level wav locally, which will be
+used for the ANOVA feature analysis.
+
+Do
+```bash
+python ./dataCollection/phoneme_wav_sample_collection.py
+```
+to extract phoneme-level wav for ANOVA feature analysis.
+
+Then do
+```bash
+python ./ANOVA_exp/freesound_feature_extraction.py
+```
+to extract acoustic features by using freesound extractor. This step requires Essentia installed. Please
+check this [link](http://essentia.upf.edu/documentation/installing.html) for the Essentia installation detail.
+
+You can also skip the previous steps by directly downloading the acoustic features from [zenodo page](https://doi.org/10.5281/zenodo.1287251).
+
+Finally, do
+```bash
+python ./ANOVA_exp/anova_calculation.py
+```
+to calculate the ANOVA F-value, sort the feature according to its F-value and plot the feature distributions.
