@@ -37,7 +37,8 @@ python ./training_scripts/embedding_model_train_overall_quality.py -d <string: t
 
 ## Model evaluation
 When the classification embedding model has been trained, we can run the below scripts to get the validation or test sets
-evaluation results.
+evaluation results. Or you can download the pretrained embedding models `pretrained_embedding_models.zip`
+from [zenodo page](https://doi.org/10.5281/zenodo.1287251), then unzip them into your embedding model path.
 
 1. evaluate pronunciation embeddings
 ```bash

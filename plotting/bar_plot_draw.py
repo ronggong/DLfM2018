@@ -5,7 +5,6 @@ plot the bar charts
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 def autolabel(rects):
     """
     Attach a text label above each bar displaying its height

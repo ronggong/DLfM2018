@@ -3,8 +3,6 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-# import matplotlib as mpl
-# mpl.style.use('classic')
 from matplotlib.patches import ConnectionPatch
 from src.parameters import *
 
@@ -99,8 +97,6 @@ def score_plot(log_mel_teacher, log_mel_student,
 
     plt.tight_layout()
     plt.savefig(plot_filename, dpi=150)
-
-    # plt.show()
 
 
 if __name__ == "__main__":
